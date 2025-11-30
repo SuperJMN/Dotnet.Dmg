@@ -1,0 +1,48 @@
+trigger:
+  branches:
+    include: [ master ]
+pr:
+  branches:
+    include: [ master, "*" ]
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: api-keys
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: '1'
+
+steps:
+  # Full checkout + submodules
+  - checkout: self
+    submodules: true
+    fetchDepth: 0
+  
+  # Install .NET SDK
+  - task: UseDotNet@2
+    inputs:
+      packageType: 'sdk'
+      version: '10.0.x' 
+      displayName: 'Install .NET 10 SDK'
+   
+  # DotnetDeployer.Tool
+  - pwsh: |
+      dotnet tool install --global DotnetDeployer.Tool
+      dotnetdeployer --version
+    displayName: Install DotnetDeployer.Tool
+  
+  # Packaging and publishing
+  - pwsh: |
+      $branch   = '$(Build.SourceBranch)'
+      $isMaster = $branch -eq 'refs/heads/master'
+      Write-Host "Branch: $branch. Is master: $isMaster"
+      
+      if ($isMaster) {
+        Write-Host 'Publishing NuGet packages'
+        dotnetdeployer nuget --api-key '$(NuGetApiKey)'
+      } else {
+        Write-Host 'NuGet dry run (no push)'
+        dotnetdeployer nuget --api-key '$(NuGetApiKey)' --no-push
+      }
+    displayName: Package, Publish and Release
