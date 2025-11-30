@@ -1,0 +1,18 @@
+  Determinando los proyectos que se van a restaurar...
+  Todos los proyectos están actualizados para la restauración.
+  Dotnet.Dmg.MachO -> /mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/bin/Debug/net10.0/Dotnet.Dmg.MachO.dll
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.Iso/IsoBuilder.cs(242,60): warning CS8604: Posible argumento de referencia nulo para el parámetro "item" en "int List<IsoDirectory>.IndexOf(IsoDirectory item)". [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.Iso/Dotnet.Dmg.Iso.csproj]
+  Dotnet.Dmg.Iso -> /mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.Iso/bin/Debug/net10.0/Dotnet.Dmg.Iso.dll
+  Dotnet.Dmg.Udif -> /mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.Udif/bin/Debug/net10.0/Dotnet.Dmg.Udif.dll
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.App/Program.cs(69,34): warning CS8600: Se va a convertir un literal nulo o un posible valor nulo en un tipo que no acepta valores NULL [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.App/Dotnet.Dmg.App.csproj]
+  Dotnet.Dmg.App -> /mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.App/bin/Debug/net10.0/Dotnet.Dmg.App.dll
+  Dotnet.Dmg.Tests -> /mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.Tests/bin/Debug/net10.0/Dotnet.Dmg.Tests.dll
+
+Compilación correcta.
+
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.Iso/IsoBuilder.cs(242,60): warning CS8604: Posible argumento de referencia nulo para el parámetro "item" en "int List<IsoDirectory>.IndexOf(IsoDirectory item)". [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.Iso/Dotnet.Dmg.Iso.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.App/Program.cs(69,34): warning CS8600: Se va a convertir un literal nulo o un posible valor nulo en un tipo que no acepta valores NULL [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.App/Dotnet.Dmg.App.csproj]
+    2 Advertencia(s)
+    0 Errores
+
+Tiempo transcurrido 00:00:02.57

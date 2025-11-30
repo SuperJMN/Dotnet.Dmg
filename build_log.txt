@@ -1,0 +1,37 @@
+  Determinando los proyectos que se van a restaurar...
+  Todos los proyectos están actualizados para la restauración.
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(23,26): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(121,39): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(76,17): warning CS0219: La variable 'padding' está asignada pero su valor nunca se usa [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(281,24): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(282,26): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(283,13): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(284,21): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(285,13): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(291,24): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(292,26): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(293,13): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(294,13): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(295,13): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+  Dotnet.Dmg.Iso -> /mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.Iso/bin/Debug/net10.0/Dotnet.Dmg.Iso.dll
+  Dotnet.Dmg.Udif -> /mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.Udif/bin/Debug/net10.0/Dotnet.Dmg.Udif.dll
+
+ERROR al compilar.
+
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(76,17): warning CS0219: La variable 'padding' está asignada pero su valor nunca se usa [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(23,26): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(121,39): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(281,24): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(282,26): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(283,13): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(284,21): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(285,13): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(291,24): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(292,26): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(293,13): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(294,13): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/CodeSigner.cs(295,13): error CS0103: El nombre 'Marshal' no existe en el contexto actual [/mnt/fast/Repos/Dotnet.Dmg/Dotnet.Dmg.MachO/Dotnet.Dmg.MachO.csproj]
+    1 Advertencia(s)
+    12 Errores
+
+Tiempo transcurrido 00:00:02.03
