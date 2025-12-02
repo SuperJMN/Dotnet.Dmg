@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Zafiro.DivineBytes;
 
 namespace Dotnet.Dmg.Iso
 {
@@ -24,7 +25,7 @@ namespace Dotnet.Dmg.Iso
 
     public class IsoFile : IsoNode
     {
-        public Func<Stream> ContentSource { get; set; } = () => new MemoryStream();
+        public Func<IByteSource> ContentSource { get; set; } = () => ByteSource.FromBytes(Array.Empty<byte>());
         public string? SourcePath { get; set; } // For reference
 
         public IsoFile(string name) : base(name)

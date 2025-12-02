@@ -1,9 +1,11 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using Dotnet.Dmg.Iso;
 using Dotnet.Dmg.Udif;
 using Dotnet.Dmg.MachO;
+using Zafiro.DivineBytes;
+using Path = System.IO.Path;
 
 namespace Dotnet.Dmg.App
 {
@@ -86,11 +88,11 @@ namespace Dotnet.Dmg.App
 
                     if (fileName.EndsWith(".icns"))
                     {
-                        resourcesDir.AddChild(new IsoFile(fileName) { ContentSource = () => File.OpenRead(file) });
+                        resourcesDir.AddChild(new IsoFile(fileName) { ContentSource = () => ByteSource.FromStreamFactory(() => File.OpenRead(file)) });
                     }
                     else
                     {
-                        var isoFile = new IsoFile(fileName) { ContentSource = () => File.OpenRead(file) };
+                        var isoFile = new IsoFile(fileName) { ContentSource = () => ByteSource.FromStreamFactory(() => File.OpenRead(file)) };
                         // Check if executable (no extension or specific extensions)
                         if (!fileName.Contains("."))
                         {
@@ -108,12 +110,12 @@ namespace Dotnet.Dmg.App
                             try
                             {
                                 new CodeSigner().Sign(tempFile, "com.example." + appName);
-                                isoFile.ContentSource = () => File.OpenRead(tempFile);
+                                isoFile.ContentSource = () => ByteSource.FromStreamFactory(() => File.OpenRead(tempFile));
                             }
                             catch (Exception ex)
                             {
                                 Console.WriteLine($"Warning: Failed to sign {fileName}: {ex.Message}. Using original file.");
-                                isoFile.ContentSource = () => File.OpenRead(file);
+                                isoFile.ContentSource = () => ByteSource.FromStreamFactory(() => File.OpenRead(file));
                             }
                         }
                         else if (fileName.EndsWith(".dylib"))
@@ -125,12 +127,12 @@ namespace Dotnet.Dmg.App
                             try
                             {
                                 new CodeSigner().Sign(tempFile, "com.example." + appName);
-                                isoFile.ContentSource = () => File.OpenRead(tempFile);
+                                isoFile.ContentSource = () => ByteSource.FromStreamFactory(() => File.OpenRead(tempFile));
                             }
                             catch (Exception ex)
                             {
                                 Console.WriteLine($"Warning: Failed to sign {fileName}: {ex.Message}. Using original file.");
-                                isoFile.ContentSource = () => File.OpenRead(file);
+                                isoFile.ContentSource = () => ByteSource.FromStreamFactory(() => File.OpenRead(file));
                             }
                         }
 
@@ -142,14 +144,14 @@ namespace Dotnet.Dmg.App
                 string plist = GenerateInfoPlist(appName.Replace(".app", ""), mainExe ?? "App");
                 var plistFile = new IsoFile("Info.plist")
                 {
-                    ContentSource = () => new MemoryStream(System.Text.Encoding.UTF8.GetBytes(plist))
+                    ContentSource = () => ByteSource.FromBytes(System.Text.Encoding.UTF8.GetBytes(plist))
                 };
                 contentsDir.AddChild(plistFile);
 
                 // Generate PkgInfo
                 var pkgInfoFile = new IsoFile("PkgInfo")
                 {
-                    ContentSource = () => new MemoryStream(System.Text.Encoding.ASCII.GetBytes("APPL????"))
+                    ContentSource = () => ByteSource.FromBytes(System.Text.Encoding.ASCII.GetBytes("APPL????"))
                 };
                 contentsDir.AddChild(pkgInfoFile);
 

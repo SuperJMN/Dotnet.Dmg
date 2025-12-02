@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Dotnet.Dmg.Iso\Dotnet.Dmg.Iso.csproj" />
+    <ProjectReference Include="..\..\Zafiro\src\Zafiro.DivineBytes\Zafiro.DivineBytes.csproj" />
   </ItemGroup>
 
   <ItemGroup>

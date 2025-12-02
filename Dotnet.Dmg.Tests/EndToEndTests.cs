@@ -3,6 +3,8 @@ using System.IO;
 using System.Linq;
 using Dotnet.Dmg.Udif;
 using Xunit;
+using Zafiro.DivineBytes;
+using Path = System.IO.Path;
 
 namespace Dotnet.Dmg.Tests
 {
@@ -55,7 +57,7 @@ namespace Dotnet.Dmg.Tests
 
                 var isoFile = new Dotnet.Dmg.Iso.IsoFile(fileName)
                 {
-                    ContentSource = () => File.OpenRead(file)
+                    ContentSource = () => ByteSource.FromStreamFactory(() => File.OpenRead(file))
                 };
                 macOs.AddChild(isoFile);
             }
