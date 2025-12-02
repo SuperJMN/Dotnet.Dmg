@@ -1,0 +1,19 @@
+<Project>
+  <PropertyGroup Condition="'$(IsPackable)' != 'false'">
+    <PackageId>$(MSBuildProjectName)</PackageId>
+    <Authors>SuperJMN</Authors>
+    <Company>José Manuel Nieto (@SuperJMN)</Company>
+    <Product>Dotnet.Dmg</Product>
+    <Description>Pure .NET tooling to craft macOS DMG images (ISO9660 + UDIF) without external dependencies.</Description>
+    <PackageTags>DMG macOS UDIF ISO9660 RockRidge packaging</PackageTags>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <RepositoryUrl>https://github.com/SuperJMN/Dotnet.Dmg</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IsPackable)' != 'false'">
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>

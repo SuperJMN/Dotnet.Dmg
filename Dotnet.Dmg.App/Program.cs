@@ -160,11 +160,12 @@ namespace Dotnet.Dmg.App
                     builder.Build(isoStream);
                     isoStream.Position = 0;
 
-                    // 3. Create DMG
-                    Console.WriteLine("Creating DMG...");
+                    // 3. Create DMG with bzip2 compression
+                    Console.WriteLine("Creating DMG (bzip2 compression)...");
                     using (var dmgStream = File.Create(outputDmg))
                     {
-                        new UdifWriter().Create(isoStream, dmgStream);
+                        var writer = new UdifWriter { CompressionType = CompressionType.Bzip2 };
+                        writer.Create(isoStream, dmgStream);
                     }
                 }
 
