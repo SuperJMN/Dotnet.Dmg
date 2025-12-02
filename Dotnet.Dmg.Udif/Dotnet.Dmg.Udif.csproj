@@ -2,11 +2,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Dotnet.Dmg.Iso\Dotnet.Dmg.Iso.csproj" />
-    <ProjectReference Include="..\..\Zafiro\src\Zafiro.DivineBytes\Zafiro.DivineBytes.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SharpCompress" Version="0.37.2" />
+    <PackageReference Include="SharpCompress" />
+    <PackageReference Include="Zafiro.DivineBytes" />
   </ItemGroup>
 
   <PropertyGroup>
