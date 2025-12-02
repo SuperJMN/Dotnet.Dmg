@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Zafiro.DivineBytes;
 
 namespace Dotnet.Dmg.Iso
 {
@@ -67,7 +68,7 @@ namespace Dotnet.Dmg.Iso
                 node.SectorLocation = currentSector;
                 if (node is IsoFile file)
                 {
-                    using (var s = file.ContentSource())
+                    using (var s = file.ContentSource().ToStreamSeekable())
                     {
                         file.DataLength = (int)s.Length;
                     }
@@ -108,7 +109,7 @@ namespace Dotnet.Dmg.Iso
             {
                 if (node is IsoFile file)
                 {
-                    using (var s = file.ContentSource())
+                    using (var s = file.ContentSource().ToStream())
                     {
                         s.CopyTo(output);
                     }

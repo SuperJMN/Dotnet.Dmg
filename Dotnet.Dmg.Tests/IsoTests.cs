@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Dotnet.Dmg.Iso;
 using Xunit;
+using Zafiro.DivineBytes;
 
 namespace Dotnet.Dmg.Tests
 {
@@ -108,7 +109,7 @@ namespace Dotnet.Dmg.Tests
             string content = "Hello World";
             var file = new IsoFile("hello.txt")
             {
-                ContentSource = () => new MemoryStream(Encoding.ASCII.GetBytes(content))
+                ContentSource = () => ByteSource.FromBytes(Encoding.ASCII.GetBytes(content))
             };
             builder.Root.AddChild(file);
 

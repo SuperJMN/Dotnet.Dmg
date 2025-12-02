@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Xml.Linq;
 using SharpCompress.Compressors.BZip2;
+using Zafiro.DivineBytes;
 
 namespace Dotnet.Dmg.Udif
 {
@@ -18,6 +19,14 @@ namespace Dotnet.Dmg.Udif
         /// Compression type to use for the DMG. Default is Zlib (UDZO)
         /// </summary>
         public CompressionType CompressionType { get; set; } = CompressionType.Zlib;
+
+        public void Create(IByteSource input, Stream output)
+        {
+            using (var inputStream = input.ToStream())
+            {
+                Create(inputStream, output);
+            }
+        }
 
         public void Create(Stream input, Stream output)
         {
