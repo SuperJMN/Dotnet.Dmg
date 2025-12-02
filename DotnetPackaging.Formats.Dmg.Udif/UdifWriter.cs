@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.IO.Compression;
-using System.Security.Cryptography;
 using System.Text;
-using System.Xml.Linq;
 using SharpCompress.Compressors.BZip2;
 using Zafiro.DivineBytes;
 
-namespace Dotnet.Dmg.Udif
+namespace DotnetPackaging.Formats.Dmg.Udif
 {
     public class UdifWriter
     {

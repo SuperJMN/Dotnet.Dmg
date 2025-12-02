@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Dotnet.Dmg.MachO
+namespace DotnetPackaging.Formats.Dmg.MachO
 {
     public class CodeSigner
     {

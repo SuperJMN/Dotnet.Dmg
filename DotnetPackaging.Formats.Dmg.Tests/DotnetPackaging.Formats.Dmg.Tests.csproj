@@ -19,9 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Dotnet.Dmg.Iso\Dotnet.Dmg.Iso.csproj" />
-    <ProjectReference Include="..\Dotnet.Dmg.Udif\Dotnet.Dmg.Udif.csproj" />
-    <ProjectReference Include="..\Dotnet.Dmg.MachO\Dotnet.Dmg.MachO.csproj" />
+    <ProjectReference Include="..\DotnetPackaging.Formats.Dmg.Iso\DotnetPackaging.Formats.Dmg.Iso.csproj" />
+    <ProjectReference Include="..\DotnetPackaging.Formats.Dmg.Udif\DotnetPackaging.Formats.Dmg.Udif.csproj" />
+    <ProjectReference Include="..\DotnetPackaging.Formats.Dmg.MachO\DotnetPackaging.Formats.Dmg.MachO.csproj" />
   </ItemGroup>
 
 </Project>

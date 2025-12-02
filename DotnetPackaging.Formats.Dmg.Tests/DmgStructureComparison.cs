@@ -1,10 +1,6 @@
-using System;
-using System.IO;
-using System.Linq;
-using Xunit;
 using Xunit.Abstractions;
 
-namespace Dotnet.Dmg.Tests
+namespace DotnetPackaging.Formats.Dmg.Tests
 {
     /// <summary>
     /// Tests to verify structural compatibility between generated and reference DMGs

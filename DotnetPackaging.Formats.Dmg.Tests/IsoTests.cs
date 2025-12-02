@@ -1,12 +1,8 @@
-using System;
-using System.IO;
-using System.Linq;
 using System.Text;
-using Dotnet.Dmg.Iso;
-using Xunit;
+using DotnetPackaging.Formats.Dmg.Iso;
 using Zafiro.DivineBytes;
 
-namespace Dotnet.Dmg.Tests
+namespace DotnetPackaging.Formats.Dmg.Tests
 {
     public class IsoTests
     {

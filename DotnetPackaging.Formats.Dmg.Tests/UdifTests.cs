@@ -1,10 +1,7 @@
-using System;
-using System.IO;
 using System.Text;
-using Dotnet.Dmg.Udif;
-using Xunit;
+using DotnetPackaging.Formats.Dmg.Udif;
 
-namespace Dotnet.Dmg.Tests
+namespace DotnetPackaging.Formats.Dmg.Tests
 {
     public class UdifTests
     {

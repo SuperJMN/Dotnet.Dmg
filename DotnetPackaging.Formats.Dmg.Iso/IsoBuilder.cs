@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
 using Zafiro.DivineBytes;
 
-namespace Dotnet.Dmg.Iso
+namespace DotnetPackaging.Formats.Dmg.Iso
 {
     public class IsoBuilder
     {

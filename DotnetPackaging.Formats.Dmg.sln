@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dotnet.Dmg.Iso", "Dotnet.Dmg.Iso\Dotnet.Dmg.Iso.csproj", "{A9DFDF9A-5179-4F5B-AE64-AC86C5085712}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotnetPackaging.Formats.Dmg.Iso", "DotnetPackaging.Formats.Dmg.Iso\DotnetPackaging.Formats.Dmg.Iso.csproj", "{A9DFDF9A-5179-4F5B-AE64-AC86C5085712}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dotnet.Dmg.Udif", "Dotnet.Dmg.Udif\Dotnet.Dmg.Udif.csproj", "{A8F5AE63-17EC-4A06-BB35-65B1E3EC5CE6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotnetPackaging.Formats.Dmg.Udif", "DotnetPackaging.Formats.Dmg.Udif\DotnetPackaging.Formats.Dmg.Udif.csproj", "{A8F5AE63-17EC-4A06-BB35-65B1E3EC5CE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dotnet.Dmg.MachO", "Dotnet.Dmg.MachO\Dotnet.Dmg.MachO.csproj", "{D3673E73-F6CE-4760-A700-3142FE74882E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotnetPackaging.Formats.Dmg.MachO", "DotnetPackaging.Formats.Dmg.MachO\DotnetPackaging.Formats.Dmg.MachO.csproj", "{D3673E73-F6CE-4760-A700-3142FE74882E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dotnet.Dmg.App", "Dotnet.Dmg.App\Dotnet.Dmg.App.csproj", "{F2CEB479-2FC8-4075-ABCD-E28895FED6A2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotnetPackaging.Formats.Dmg.App", "DotnetPackaging.Formats.Dmg.App\DotnetPackaging.Formats.Dmg.App.csproj", "{F2CEB479-2FC8-4075-ABCD-E28895FED6A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dotnet.Dmg.Tests", "Dotnet.Dmg.Tests\Dotnet.Dmg.Tests.csproj", "{55D37E16-50CD-4FAE-83AC-FC5ED23CAAB2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotnetPackaging.Formats.Dmg.Tests", "DotnetPackaging.Formats.Dmg.Tests\DotnetPackaging.Formats.Dmg.Tests.csproj", "{55D37E16-50CD-4FAE-83AC-FC5ED23CAAB2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Dotnet.Dmg.MachO
+namespace DotnetPackaging.Formats.Dmg.MachO
 {
     public static class MachOConstants
     {

@@ -1,12 +1,9 @@
-using System;
-using System.IO;
-using System.Linq;
-using Dotnet.Dmg.Udif;
-using Xunit;
+using DotnetPackaging.Formats.Dmg.Iso;
+using DotnetPackaging.Formats.Dmg.Udif;
 using Zafiro.DivineBytes;
 using Path = System.IO.Path;
 
-namespace Dotnet.Dmg.Tests
+namespace DotnetPackaging.Formats.Dmg.Tests
 {
     public class EndToEndTests
     {
@@ -36,11 +33,11 @@ namespace Dotnet.Dmg.Tests
             // This also verifies the library usage pattern.
 
             var appName = "EvaluacionesApp.Desktop";
-            var builder = new Dotnet.Dmg.Iso.IsoBuilder("EvaluacionesApp"); // Volume Name
+            var builder = new IsoBuilder("EvaluacionesApp"); // Volume Name
 
             // Create .app structure
             var root = builder.Root;
-            root.AddChild(new Dotnet.Dmg.Iso.IsoSymlink("Applications", "/Applications"));
+            root.AddChild(new IsoSymlink("Applications", "/Applications"));
 
             var appBundle = root.AddDirectory($"{appName}.app");
             var contents = appBundle.AddDirectory("Contents");
@@ -55,7 +52,7 @@ namespace Dotnet.Dmg.Tests
                 // Skip non-essential files if needed, but for now copy all
                 if (fileName.EndsWith(".pdb") || fileName.EndsWith(".dbg")) continue;
 
-                var isoFile = new Dotnet.Dmg.Iso.IsoFile(fileName)
+                var isoFile = new IsoFile(fileName)
                 {
                     ContentSource = () => ByteSource.FromStreamFactory(() => File.OpenRead(file))
                 };
@@ -63,7 +60,7 @@ namespace Dotnet.Dmg.Tests
             }
 
             // Sign binaries (Ad-hoc)
-            var signer = new Dotnet.Dmg.MachO.CodeSigner();
+            var signer = new DotnetPackaging.Formats.Dmg.MachO.CodeSigner();
             // We need to sign the *source* files? No, we need to sign the files *in the ISO*.
             // Wait, IsoFile takes a stream. CodeSigner modifies a file on disk.
             // The current Program.cs implementation copies files to a temp dir, signs them, then adds to ISO?

@@ -1,7 +1,6 @@
-using System;
 using System.Runtime.InteropServices;
 
-namespace Dotnet.Dmg.Udif
+namespace DotnetPackaging.Formats.Dmg.Udif
 {
     public static class UdifConstants
     {

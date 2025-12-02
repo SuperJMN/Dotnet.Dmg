@@ -1,13 +1,13 @@
 using System;
 using System.IO;
 using System.Linq;
-using Dotnet.Dmg.Iso;
-using Dotnet.Dmg.Udif;
-using Dotnet.Dmg.MachO;
+using DotnetPackaging.Formats.Dmg.Iso;
+using DotnetPackaging.Formats.Dmg.MachO;
+using DotnetPackaging.Formats.Dmg.Udif;
 using Zafiro.DivineBytes;
 using Path = System.IO.Path;
 
-namespace Dotnet.Dmg.App
+namespace DotnetPackaging.Formats.Dmg.App
 {
     class Program
     {

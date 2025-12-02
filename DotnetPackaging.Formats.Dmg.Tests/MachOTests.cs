@@ -1,10 +1,6 @@
-using System;
-using System.IO;
-using System.Runtime.InteropServices;
-using Dotnet.Dmg.MachO;
-using Xunit;
+using DotnetPackaging.Formats.Dmg.MachO;
 
-namespace Dotnet.Dmg.Tests
+namespace DotnetPackaging.Formats.Dmg.Tests
 {
     public class MachOTests
     {

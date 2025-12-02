@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Text;
 
-namespace Dotnet.Dmg.Iso
+namespace DotnetPackaging.Formats.Dmg.Iso
 {
     public static class RockRidge
     {

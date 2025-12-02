@@ -1,8 +1,7 @@
-using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Dotnet.Dmg.Iso
+namespace DotnetPackaging.Formats.Dmg.Iso
 {
     public static class IsoConstants
     {

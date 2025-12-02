@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Zafiro.DivineBytes;
 
-namespace Dotnet.Dmg.Iso
+namespace DotnetPackaging.Formats.Dmg.Iso
 {
     public abstract class IsoNode
     {

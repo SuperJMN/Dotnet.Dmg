@@ -1,4 +1,4 @@
-namespace Dotnet.Dmg.Udif
+namespace DotnetPackaging.Formats.Dmg.Udif
 {
     /// <summary>
     /// Compression types supported for UDIF DMG images
