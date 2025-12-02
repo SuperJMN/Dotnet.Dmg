@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml.Linq;
+using SharpCompress.Compressors.BZip2;
 
 namespace Dotnet.Dmg.Udif
 {
@@ -12,6 +13,11 @@ namespace Dotnet.Dmg.Udif
     {
         private const int ChunkSize = 0x100000; // 1MB chunks usually
         private const int SectorSize = 512;
+
+        /// <summary>
+        /// Compression type to use for the DMG. Default is Zlib (UDZO)
+        /// </summary>
+        public CompressionType CompressionType { get; set; } = CompressionType.Zlib;
 
         public void Create(Stream input, Stream output)
         {
@@ -41,41 +47,23 @@ namespace Dotnet.Dmg.Udif
                 int read = input.Read(buffer, 0, ChunkSize);
                 if (read == 0) break;
 
-                // Compress
-                using (var ms = new MemoryStream())
+                // Compress based on compression type
+                byte[] compressed = CompressChunk(buffer, read);
+
+                // Write to output
+                output.Write(compressed, 0, compressed.Length);
+
+                // Add to block map
+                blockMap.Add(new BlockEntry
                 {
-                    // UDZO uses zlib. 
-                    // ZLib header (0x78 0xDA usually) is required?
-                    // DeflateStream produces raw deflate.
-                    // We need ZLib wrapper.
-                    // Or we can use GZipStream? No, UDZO expects zlib.
-                    // .NET doesn't have ZLibStream built-in until recently?
-                    // We can simulate ZLib header + Deflate + Adler32.
+                    Type = (uint)CompressionType,
+                    UncompressedOffset = (ulong)inputOffset / SectorSize,
+                    UncompressedLength = (ulong)read / SectorSize,
+                    CompressedOffset = (ulong)outputOffset,
+                    CompressedLength = (ulong)compressed.Length
+                });
 
-                    WriteZlibHeader(ms);
-                    using (var deflate = new DeflateStream(ms, CompressionMode.Compress, true))
-                    {
-                        deflate.Write(buffer, 0, read);
-                    }
-                    WriteAdler32(ms, buffer, read);
-
-                    byte[] compressed = ms.ToArray();
-
-                    // Write to output
-                    output.Write(compressed, 0, compressed.Length);
-
-                    // Add to block map
-                    blockMap.Add(new BlockEntry
-                    {
-                        Type = 0x80000005, // zlib
-                        UncompressedOffset = (ulong)inputOffset / SectorSize,
-                        UncompressedLength = (ulong)read / SectorSize,
-                        CompressedOffset = (ulong)outputOffset,
-                        CompressedLength = (ulong)compressed.Length
-                    });
-
-                    outputOffset += compressed.Length;
-                }
+                outputOffset += compressed.Length;
                 inputOffset += read;
             }
 
@@ -102,7 +90,7 @@ namespace Dotnet.Dmg.Udif
             koly.Signature = UdifConstants.KolySignature; // 'koly'
             koly.Version = 4;
             koly.HeaderSize = 512;
-            koly.Flags = 0;
+            koly.Flags = 1; // Bit 0 set: flattened image
             koly.RunningDataForkOffset = 0;
             koly.DataForkOffset = 0;
             koly.DataForkLength = (ulong)dataForkLength;
@@ -120,6 +108,37 @@ namespace Dotnet.Dmg.Udif
             // Checksums... TODO
 
             WriteKoly(output, koly);
+        }
+
+        private byte[] CompressChunk(byte[] buffer, int length)
+        {
+            using (var ms = new MemoryStream())
+            {
+                if (CompressionType == CompressionType.Zlib)
+                {
+                    // UDZO - zlib compression
+                    WriteZlibHeader(ms);
+                    using (var deflate = new DeflateStream(ms, CompressionMode.Compress, true))
+                    {
+                        deflate.Write(buffer, 0, length);
+                    }
+                    WriteAdler32(ms, buffer, length);
+                }
+                else if (CompressionType == CompressionType.Bzip2)
+                {
+                    // UDBZ - bzip2 compression
+                    using (var bzip2 = new BZip2Stream(ms, SharpCompress.Compressors.CompressionMode.Compress, true))
+                    {
+                        bzip2.Write(buffer, 0, length);
+                    }
+                }
+                else
+                {
+                    throw new NotSupportedException($"Compression type {CompressionType} is not supported");
+                }
+
+                return ms.ToArray();
+            }
         }
 
         private void WriteZlibHeader(Stream s)
@@ -228,7 +247,11 @@ namespace Dotnet.Dmg.Udif
 
                 w.Write(Swap(totalSectors)); // Sector Count
                 w.Write(Swap((ulong)0)); // Data Offset
-                w.Write(Swap(0)); // Buffers Needed
+                
+                // Buffers Needed: Maximum sectors per block (ChunkSize / SectorSize)
+                uint buffersNeeded = (uint)(ChunkSize / SectorSize);
+                w.Write(Swap(buffersNeeded)); // Buffers Needed (2048 for 1MB chunks)
+                
                 w.Write(Swap(0)); // Block Descriptors
                 w.Write(new byte[24]); // Reserved
 
