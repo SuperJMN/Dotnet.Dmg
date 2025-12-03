@@ -25,78 +25,86 @@ namespace DotnetPackaging.Formats.Dmg.Udif
 
         public void Create(Stream input, Stream output)
         {
-            // 1. Compress Data Fork
+            // 1. Compress Data Fork (absolute offsets, 512-aligned blocks)
             var blockMap = new List<BlockEntry>();
-            long dataStart = output.Position;
-
-            // We need to calculate CRC32 of data fork as we go? 
-            // Koly block has DataForkChecksum.
-            // We also need to calculate checksum of the whole DMG (except Koly).
-
-            // Let's wrap output in a CRC calculating stream if possible, or calculate at end?
-            // Calculating at end is expensive (read back).
-            // We can track it manually.
-
-            // For now, let's just write and track offsets.
+            long dataStart = output.Position; // absolute start of data fork in file
 
             byte[] buffer = new byte[ChunkSize];
-            long inputOffset = 0;
-            long outputOffset = 0;
-
-            // Initialize CRC for Data Fork
-            // We'll skip CRC for now or implement a helper.
+            long inputOffset = 0; // uncompressed bytes processed
+            ulong uncompressedSectorsWritten = 0; // for sector-based offsets
 
             while (true)
             {
                 int read = input.Read(buffer, 0, ChunkSize);
                 if (read == 0) break;
 
-                // Compress based on compression type
+                // Compress chunk
                 byte[] compressed = CompressChunk(buffer, read);
 
-                // Write to output
+                // Align next block start to 512 bytes
+                long alignPad = AlignUp(output.Position, SectorSize) - output.Position;
+                if (alignPad > 0)
+                {
+                    output.Write(new byte[alignPad], 0, (int)alignPad);
+                }
+
+                long blockStartAbsolute = output.Position; // absolute offset in file
+
+                // Write compressed data
                 output.Write(compressed, 0, compressed.Length);
+
+                // Compute sector counts (ceil for last partial chunk)
+                ulong sectorsInChunk = (ulong)((read + SectorSize - 1) / SectorSize);
 
                 // Add to block map
                 blockMap.Add(new BlockEntry
                 {
                     Type = (uint)CompressionType,
-                    UncompressedOffset = (ulong)inputOffset / SectorSize,
-                    UncompressedLength = (ulong)read / SectorSize,
-                    CompressedOffset = (ulong)outputOffset,
+                    UncompressedOffset = uncompressedSectorsWritten,
+                    UncompressedLength = sectorsInChunk,
+                    CompressedOffset = (ulong)blockStartAbsolute,
                     CompressedLength = (ulong)compressed.Length
                 });
 
-                outputOffset += compressed.Length;
+                uncompressedSectorsWritten += sectorsInChunk;
                 inputOffset += read;
             }
 
-            // Add terminator block
+            // Align end of data fork to sector boundary before writing XML
+            long xmlStart = AlignUp(output.Position, SectorSize);
+            long pad = xmlStart - output.Position;
+            if (pad > 0)
+            {
+                output.Write(new byte[pad], 0, (int)pad);
+            }
+
+            // Add terminator block now that we know the aligned XML start
             blockMap.Add(new BlockEntry
             {
                 Type = 0xFFFFFFFF,
-                UncompressedOffset = (ulong)inputOffset / SectorSize,
+                UncompressedOffset = uncompressedSectorsWritten,
                 UncompressedLength = 0,
-                CompressedOffset = (ulong)outputOffset,
+                CompressedOffset = (ulong)xmlStart,
                 CompressedLength = 0
             });
 
-            long dataForkLength = outputOffset;
+            long dataForkLength = xmlStart - dataStart;
 
             // 2. Generate XML Plist
             string xml = GeneratePlist(blockMap, (ulong)input.Length);
             byte[] xmlBytes = Encoding.UTF8.GetBytes(xml);
 
+            long xmlOffsetAbsolute = output.Position; // absolute offset for koly (already aligned)
             output.Write(xmlBytes, 0, xmlBytes.Length);
 
-            // 3. Write Koly Block
+            // 3. Write Koly Block (all big-endian, absolute offsets)
             var koly = new KolyBlock();
             koly.Signature = UdifConstants.KolySignature; // 'koly'
             koly.Version = 4;
             koly.HeaderSize = 512;
             koly.Flags = 1; // Bit 0 set: flattened image
             koly.RunningDataForkOffset = 0;
-            koly.DataForkOffset = 0;
+            koly.DataForkOffset = 0; // flattened
             koly.DataForkLength = (ulong)dataForkLength;
             koly.RsrcForkOffset = 0;
             koly.RsrcForkLength = 0;
@@ -104,10 +112,10 @@ namespace DotnetPackaging.Formats.Dmg.Udif
             koly.SegmentCount = 1;
             koly.SegmentId = Guid.NewGuid();
 
-            koly.XmlOffset = (ulong)dataForkLength;
+            koly.XmlOffset = (ulong)xmlOffsetAbsolute; // absolute offset from start of file
             koly.XmlLength = (ulong)xmlBytes.Length;
 
-            koly.SectorCount = (ulong)input.Length / SectorSize; // Input size in sectors
+            koly.SectorCount = (ulong)((input.Length + SectorSize - 1) / SectorSize); // total sectors (ceil)
 
             // Checksums... TODO
 
@@ -259,12 +267,12 @@ namespace DotnetPackaging.Formats.Dmg.Udif
                 w.Write(Swap(0)); // Block Descriptors
                 w.Write(new byte[24]); // Reserved
 
-                // Checksum (132 bytes)
-                w.Write(Swap(2)); // Checksum Type (CRC32)
-                w.Write(Swap(4)); // Checksum Size
-                w.Write(new byte[124]); // Checksum Data + Padding
+                // Checksum (136 bytes: type(4) + size(4) + data(128))
+                w.Write(Swap((uint)0)); // Checksum Type
+                w.Write(Swap((uint)0)); // Checksum Size
+                w.Write(new byte[128]); // Checksum Data + Padding
 
-                w.Write(Swap(blocks.Count)); // Block Run Count
+                w.Write(Swap(blocks.Count)); // Block Run Count (now at offset 0xC8)
 
                 foreach (var b in blocks)
                 {
@@ -356,6 +364,12 @@ namespace DotnetPackaging.Formats.Dmg.Udif
         private uint Swap(uint v) => (uint)System.Net.IPAddress.HostToNetworkOrder((int)v);
         private int Swap(int v) => System.Net.IPAddress.HostToNetworkOrder(v);
         private ulong Swap(ulong v) => (ulong)System.Net.IPAddress.HostToNetworkOrder((long)v);
+
+        private static long AlignUp(long value, int alignment)
+        {
+            long mask = alignment - 1;
+            return (value + mask) & ~mask;
+        }
 
         private struct BlockEntry
         {
