@@ -44,3 +44,6 @@ A TDD-driven implementation to achieve parity with industry-standard DMGs (Parce
 - **Memory Usage**: The `IsoBuilder` builds the filesystem structure in memory. For very large applications, a streaming approach or temporary file backing would be more efficient.
 - **Icon Generation**: The tool expects a pre-made `.icns` file. Integrating a PNG-to-ICNS converter would streamline the workflow.
 - **Recursive Signing**: Parcel explicitly discovers and signs all `.dylib` files and the main executable. Our CLI does this, but ensuring we catch all native dependencies is crucial.
+
+## Recent fixes (Jan 2025)
+- Align mish layout to match reference tooling (block count at 0xC8, checksum field 136 bytes) so dmgwiz/7z can parse generated UDBZ DMGs. XML and terminator are 512-aligned.
