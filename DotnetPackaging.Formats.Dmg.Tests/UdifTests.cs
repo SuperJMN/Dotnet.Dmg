@@ -1,7 +1,9 @@
+using System.Buffers.Binary;
 using System.Diagnostics;
+using System.IO.Compression;
+using System.IO.Hashing;
 using System.Linq;
 using System.Text;
-using System.IO.Compression;
 using DotnetPackaging.Formats.Dmg.Udif;
 using SharpCompress.Compressors.BZip2;
 
@@ -98,6 +100,14 @@ namespace DotnetPackaging.Formats.Dmg.Tests
                    ((uint)data[offset + 2] << 8) | data[offset + 3];
         }
 
+        private uint ComputeCrc32(byte[] data, long offset, long length)
+        {
+            var crc = new Crc32();
+            crc.Append(data.AsSpan((int)offset, (int)length));
+            var hash = crc.GetCurrentHash();
+            return BinaryPrimitives.ReadUInt32BigEndian(hash);
+        }
+
         private ulong ReadBigEndianUInt64(byte[] data, int offset)
         {
             return ((ulong)data[offset] << 56) | ((ulong)data[offset + 1] << 48) | 
@@ -175,6 +185,77 @@ namespace DotnetPackaging.Formats.Dmg.Tests
             
             Assert.True(bzip2Output.Length < zlibOutput.Length, 
                         $"Bzip2 ({bzip2Output.Length}) should produce smaller output than zlib ({zlibOutput.Length})");
+        }
+
+        [Fact]
+        public void GeneratedDmg_WritesCrc32Checksums()
+        {
+            var writer = new UdifWriter();
+            using var input = new MemoryStream(Encoding.UTF8.GetBytes("checksum-test"));
+            using var output = new MemoryStream();
+
+            writer.Create(input, output);
+            byte[] dmg = output.ToArray();
+
+            var validator = new UdifValidator();
+            var res = validator.Validate(dmg);
+            Assert.True(res.IsValid);
+            var koly = res.KolyBlock!.Value;
+
+            Assert.Equal(2u, koly.DataForkChecksumType);
+            Assert.Equal(4u, koly.DataForkChecksumSize);
+            Assert.Equal(2u, koly.ChecksumType);
+            Assert.Equal(4u, koly.ChecksumSize);
+
+            uint expectedData = ComputeCrc32(dmg, 0, (long)koly.DataForkLength);
+            uint actualData = ReadBigEndianUInt32(koly.DataForkChecksum, 0);
+            Assert.Equal(expectedData, actualData);
+
+            ulong masterLength = koly.XmlOffset + koly.XmlLength;
+            uint expectedMaster = ComputeCrc32(dmg, 0, (long)masterLength);
+            uint actualMaster = ReadBigEndianUInt32(koly.Checksum, 0);
+            Assert.Equal(expectedMaster, actualMaster);
+        }
+
+        [Fact]
+        public void Validator_DetectsChecksumMismatch()
+        {
+            var writer = new UdifWriter();
+            using var input = new MemoryStream(Encoding.UTF8.GetBytes("checksum-mismatch"));
+            using var output = new MemoryStream();
+
+            writer.Create(input, output);
+            byte[] dmg = output.ToArray();
+
+            // Corrupt data fork
+            dmg[0] ^= 0xFF;
+            var validator = new UdifValidator();
+            var res = validator.Validate(dmg);
+
+            Assert.False(res.IsValid);
+            Assert.Contains(res.Errors, e => e.Contains("DataFork") && e.Contains("checksum"));
+        }
+
+        [Fact]
+        public void Validator_DetectsMasterChecksumMismatch_OnXml()
+        {
+            var writer = new UdifWriter();
+            using var input = new MemoryStream(Encoding.UTF8.GetBytes("checksum-xml"));
+            using var output = new MemoryStream();
+
+            writer.Create(input, output);
+            byte[] dmg = output.ToArray();
+
+            // Corrupt XML region (leave data fork intact)
+            var koly = new UdifValidator().Validate(dmg).KolyBlock!.Value;
+            int xmlStart = (int)koly.XmlOffset;
+            dmg[xmlStart] ^= 0xAA;
+
+            var validator = new UdifValidator();
+            var res = validator.Validate(dmg);
+
+            Assert.False(res.IsValid);
+            Assert.Contains(res.Errors, e => e.Contains("master", StringComparison.OrdinalIgnoreCase) && e.Contains("checksum", StringComparison.OrdinalIgnoreCase));
         }
 
         [Fact]

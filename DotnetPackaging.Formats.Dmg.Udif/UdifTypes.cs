@@ -26,7 +26,7 @@ namespace DotnetPackaging.Formats.Dmg.Udif
         public Guid SegmentId;
         public uint DataForkChecksumType;
         public uint DataForkChecksumSize;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
         public byte[] DataForkChecksum;
         public ulong XmlOffset;
         public ulong XmlLength;
@@ -34,7 +34,7 @@ namespace DotnetPackaging.Formats.Dmg.Udif
         public byte[] Reserved1;
         public uint ChecksumType;
         public uint ChecksumSize;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
         public byte[] Checksum;
         public uint ImageVariant; // 1
         public ulong SectorCount;
