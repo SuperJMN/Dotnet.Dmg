@@ -47,3 +47,4 @@ A TDD-driven implementation to achieve parity with industry-standard DMGs (Parce
 
 ## Recent fixes (Jan 2025)
 - Align mish layout to match reference tooling (block count at 0xC8, checksum field 136 bytes) so dmgwiz/7z can parse generated UDBZ DMGs. XML and terminator are 512-aligned.
+- Generate CRC32 checksums for data fork and master (data fork + XML) and validate them to catch corruption early.

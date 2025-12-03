@@ -1,3 +1,5 @@
+using System.Buffers.Binary;
+using System.IO.Hashing;
 using System.Linq;
 using System.Text;
 
@@ -87,6 +89,8 @@ namespace DotnetPackaging.Formats.Dmg.Udif
                 return result;
             }
 
+            ValidateChecksums(dmgStream, koly.Value, result);
+
             // Parse and validate XML plist and blkx table
             if (koly.Value.XmlLength > 0)
             {
@@ -132,8 +136,8 @@ namespace DotnetPackaging.Formats.Dmg.Udif
 
                 koly.DataForkChecksumType = ReadBigEndianUInt32(data, 80);
                 koly.DataForkChecksumSize = ReadBigEndianUInt32(data, 84);
-                koly.DataForkChecksum = new byte[32];
-                Array.Copy(data, 88, koly.DataForkChecksum, 0, 32);
+                koly.DataForkChecksum = new byte[128];
+                Array.Copy(data, 88, koly.DataForkChecksum, 0, 128);
 
                 koly.XmlOffset = ReadBigEndianUInt64(data, 0xD8); // 216
                 koly.XmlLength = ReadBigEndianUInt64(data, 0xE0); // 224
@@ -143,8 +147,8 @@ namespace DotnetPackaging.Formats.Dmg.Udif
 
                 koly.ChecksumType = ReadBigEndianUInt32(data, 352);
                 koly.ChecksumSize = ReadBigEndianUInt32(data, 356);
-                koly.Checksum = new byte[32];
-                Array.Copy(data, 360, koly.Checksum, 0, 32);
+                koly.Checksum = new byte[128];
+                Array.Copy(data, 360, koly.Checksum, 0, 128);
 
                 koly.ImageVariant = ReadBigEndianUInt32(data, 488);
                 koly.SectorCount = ReadBigEndianUInt64(data, 492);
@@ -262,6 +266,48 @@ namespace DotnetPackaging.Formats.Dmg.Udif
             }
         }
 
+        private void ValidateChecksums(Stream dmgStream, KolyBlock koly, ValidationResult result)
+        {
+            // Data fork checksum
+            if (koly.DataForkChecksumType == 0 && koly.DataForkChecksumSize == 0)
+            {
+                result.Warnings.Add("DataFork checksum missing");
+            }
+            else if (koly.DataForkChecksumType == 2 && koly.DataForkChecksumSize == 4)
+            {
+                uint stored = ReadBigEndianUInt32(koly.DataForkChecksum, 0);
+                uint computed = ComputeCrc32(dmgStream, 0, (long)koly.DataForkLength);
+                if (stored != computed)
+                {
+                    result.Errors.Add($"DataFork checksum mismatch: stored 0x{stored:X8} vs computed 0x{computed:X8}");
+                }
+            }
+            else
+            {
+                result.Warnings.Add($"Unsupported DataFork checksum type/size: {koly.DataForkChecksumType}/{koly.DataForkChecksumSize}");
+            }
+
+            // Master checksum covers data fork + XML
+            ulong masterLength = koly.XmlOffset + koly.XmlLength;
+            if (koly.ChecksumType == 0 && koly.ChecksumSize == 0)
+            {
+                result.Warnings.Add("Master checksum missing");
+            }
+            else if (koly.ChecksumType == 2 && koly.ChecksumSize == 4)
+            {
+                uint stored = ReadBigEndianUInt32(koly.Checksum, 0);
+                uint computed = ComputeCrc32(dmgStream, 0, (long)masterLength);
+                if (stored != computed)
+                {
+                    result.Errors.Add($"Master checksum mismatch: stored 0x{stored:X8} vs computed 0x{computed:X8}");
+                }
+            }
+            else
+            {
+                result.Warnings.Add($"Unsupported master checksum type/size: {koly.ChecksumType}/{koly.ChecksumSize}");
+            }
+        }
+
         private void ValidateXmlAndBlkx(Stream dmgStream, KolyBlock koly, ValidationResult result)
         {
             try
@@ -291,7 +337,7 @@ namespace DotnetPackaging.Formats.Dmg.Udif
 
                 // Extract and validate mish block
                 byte[]? mishData = ExtractMishBlock(xmlContent, result);
-                if (mishData != null && result.Errors.Count == 0)
+                if (mishData != null)
                 {
                     ValidateMishBlock(mishData, koly, dmgStream.Length, result);
                 }
@@ -474,6 +520,32 @@ namespace DotnetPackaging.Formats.Dmg.Udif
                    ((ulong)data[offset + 2] << 40) | ((ulong)data[offset + 3] << 32) |
                    ((ulong)data[offset + 4] << 24) | ((ulong)data[offset + 5] << 16) |
                    ((ulong)data[offset + 6] << 8) | data[offset + 7];
+        }
+
+        private uint ComputeCrc32(Stream stream, long offset, long length)
+        {
+            long originalPosition = stream.Position;
+            stream.Seek(offset, SeekOrigin.Begin);
+
+            var crc = new Crc32();
+            byte[] buffer = new byte[81920];
+            long remaining = length;
+            while (remaining > 0)
+            {
+                int toRead = (int)Math.Min(buffer.Length, remaining);
+                int read = stream.Read(buffer, 0, toRead);
+                if (read <= 0)
+                {
+                    throw new InvalidOperationException("Unexpected end of stream while computing CRC32");
+                }
+
+                crc.Append(buffer.AsSpan(0, read));
+                remaining -= read;
+            }
+
+            stream.Seek(originalPosition, SeekOrigin.Begin);
+            var hash = crc.GetCurrentHash();
+            return BinaryPrimitives.ReadUInt32BigEndian(hash);
         }
     }
 }

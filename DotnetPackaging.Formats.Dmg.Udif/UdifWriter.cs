@@ -1,4 +1,6 @@
+using System.Buffers.Binary;
 using System.IO.Compression;
+using System.IO.Hashing;
 using System.Text;
 using SharpCompress.Compressors.BZip2;
 using Zafiro.DivineBytes;
@@ -28,6 +30,8 @@ namespace DotnetPackaging.Formats.Dmg.Udif
             // 1. Compress Data Fork (absolute offsets, 512-aligned blocks)
             var blockMap = new List<BlockEntry>();
             long dataStart = output.Position; // absolute start of data fork in file
+            var dataCrc = new Crc32();
+            var masterCrc = new Crc32();
 
             byte[] buffer = new byte[ChunkSize];
             long inputOffset = 0; // uncompressed bytes processed
@@ -52,6 +56,8 @@ namespace DotnetPackaging.Formats.Dmg.Udif
 
                 // Write compressed data
                 output.Write(compressed, 0, compressed.Length);
+                dataCrc.Append(compressed);
+                masterCrc.Append(compressed);
 
                 // Compute sector counts (ceil for last partial chunk)
                 ulong sectorsInChunk = (ulong)((read + SectorSize - 1) / SectorSize);
@@ -75,7 +81,11 @@ namespace DotnetPackaging.Formats.Dmg.Udif
             long pad = xmlStart - output.Position;
             if (pad > 0)
             {
-                output.Write(new byte[pad], 0, (int)pad);
+                Span<byte> padding = pad <= 4096 ? stackalloc byte[(int)pad] : new byte[pad];
+                padding.Clear();
+                output.Write(padding);
+                dataCrc.Append(padding);
+                masterCrc.Append(padding);
             }
 
             // Add terminator block now that we know the aligned XML start
@@ -96,6 +106,7 @@ namespace DotnetPackaging.Formats.Dmg.Udif
 
             long xmlOffsetAbsolute = output.Position; // absolute offset for koly (already aligned)
             output.Write(xmlBytes, 0, xmlBytes.Length);
+            masterCrc.Append(xmlBytes);
 
             // 3. Write Koly Block (all big-endian, absolute offsets)
             var koly = new KolyBlock();
@@ -117,7 +128,24 @@ namespace DotnetPackaging.Formats.Dmg.Udif
 
             koly.SectorCount = (ulong)((input.Length + SectorSize - 1) / SectorSize); // total sectors (ceil)
 
-            // Checksums... TODO
+            // Checksums (CRC32)
+            uint dataForkCrc = BinaryPrimitives.ReadUInt32BigEndian(dataCrc.GetCurrentHash());
+            koly.DataForkChecksumType = 2;
+            koly.DataForkChecksumSize = 4;
+            koly.DataForkChecksum = new byte[128];
+            koly.DataForkChecksum[0] = (byte)(dataForkCrc >> 24);
+            koly.DataForkChecksum[1] = (byte)(dataForkCrc >> 16);
+            koly.DataForkChecksum[2] = (byte)(dataForkCrc >> 8);
+            koly.DataForkChecksum[3] = (byte)dataForkCrc;
+
+            uint masterCrcValue = BinaryPrimitives.ReadUInt32BigEndian(masterCrc.GetCurrentHash());
+            koly.ChecksumType = 2;
+            koly.ChecksumSize = 4;
+            koly.Checksum = new byte[128];
+            koly.Checksum[0] = (byte)(masterCrcValue >> 24);
+            koly.Checksum[1] = (byte)(masterCrcValue >> 16);
+            koly.Checksum[2] = (byte)(masterCrcValue >> 8);
+            koly.Checksum[3] = (byte)masterCrcValue;
 
             WriteKoly(output, koly);
         }
