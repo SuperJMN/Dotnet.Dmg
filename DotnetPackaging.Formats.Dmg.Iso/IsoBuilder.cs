@@ -441,6 +441,10 @@ namespace DotnetPackaging.Formats.Dmg.Iso
             if (node is IsoDirectory && name == "." && node == _root)
             {
                 susp.AddRange(RockRidge.CreateSP());
+                susp.AddRange(RockRidge.CreateER(
+                    "RRIP_1991A",
+                    "THE ROCK RIDGE INTERCHANGE PROTOCOL PROVIDES SUPPORT FOR POSIX FILE SYSTEM SEMANTICS",
+                    "NIHIL OBSTAT"));
             }
 
             susp.AddRange(RockRidge.CreateRR());
